@@ -1,0 +1,96 @@
+extends ../layouts/default
+
+block main
+  h3= title
+ - if (typeof errors != 'undefined' && errors.length)
+    .fade.in.alert.alert-danger
+      button.close(type='button', data-dismiss='alert') ×
+      ul
+        - each error in errors
+          li!= error
+
+block content
+  .container
+  .row
+    .col-md-6.col-md-offset-3
+      .panel.panel-login
+        .panel-heading
+          .row
+            h3 Add User
+          hr
+        .panel-body
+          .row
+            .col-lg-12
+              form#register-form(action='/admin/user/add', method='POST', role='form')
+                .form-group
+                  input(type="hidden", name="_csrf", value="#{csrf_token}")
+                .form-group
+                  input#email.form-control(type='text', name="emailSignUp", tabindex='1', placeholder='Email', value='', data-error="#errorEmailSignUp")
+                  small#errorEmailSignUp(style='color: red;')
+                .form-group
+                  input#name.form-control(type='text', name="name", placeholder='Full name', value='', data-error="#errorName")
+                  small#errorName(style='color: red;')
+                .form-group
+                  input#password.form-control.password(type='password', name='passwordSignUp', tabindex='2', placeholder='Password', data-error="#errorPasswordSignUp")
+                  small#errorPasswordSignUp(style='color: red;')
+                .form-group
+                  input#confirm-password.form-control(type='password', name="repassword", placeholder='ReTypePassword', data-error="#errorRetypePassword", tabindex='2')
+                  small#errorRetypePassword(style='color: red;')
+                .form-group
+                  .row
+                    .col-sm-6.col-sm-offset-3
+                      input#register-submit.form-control.btn.btn-register(type='submit', name='register-submit', tabindex='4', value='Register Now')
+
+    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js')
+    script(type='text/javascript').
+      $("#register-form").validate({
+        rules: {
+          emailSignUp: {
+            required: true,
+            email: true
+          },
+          name: {
+            required: true,
+            maxlength: 30,
+            minlength: 5
+          },
+          passwordSignUp: {
+            required: true,
+            maxlength: 20,
+            minlength: 5
+          },
+          repassword: {
+            required: true,
+            equalTo: ".password"
+          }
+        },
+        messages: {
+          emailSignUp: {
+            required: "Email field required!",
+            email: "Please enter email! "
+          },
+          name: {
+            required: "Fullname field required!",
+            maxlength: "Password field less than 30 characters! ",
+            minlength: "Password field more than 5 characters! "
+          },
+          passwordSignUp: {
+            required: "Password field not required! ",
+            maxlength: "Password field less than 20 characters! ",
+            minlength: "Password field more than 5 characters! "
+          },
+          repassword: {
+            required: "Password field not required! ",
+            equalTo: "Password not match!"
+          }
+        },
+        errorElement: "span",
+        errorPlacement: function (error, element) {
+          var placement = $(element).data("error");
+          if (placement) {
+            $(placement).append(error)
+          } else {
+            error.insertAfter(element);
+          }
+        }
+      });

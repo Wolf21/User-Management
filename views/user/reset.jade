@@ -1,0 +1,95 @@
+extends ../layouts/default
+
+block main
+  h3= title
+  //- - if (hasErrors > 0)
+  //-     .alert.alert-danger
+  //-       a.close(href='#', data-dismiss='alert', aria-label='close')
+  //-         | ×
+  //-       ul
+  //-       - each message in messages
+  //-         li!= message
+  //- - if (noErrors > 0)
+  //-     .alert.alert-success
+  //-       a.close(href='#', data-dismiss='alert', aria-label='close')
+  //-         | ×
+  //-       ul
+  //-       - each succ in success
+  //-         li!= succ
+block content
+  .container
+    .row
+      .col-md-6.col-md-push-3
+        .panel.with-nav-tabs.panel-info
+          .panel-body
+            .tab-content
+              #login.tab-pane.fade.in.active.register
+                .container-fluid
+                  .row
+                    // Form reset password!
+                    form#resetpassword(action='', method='POST', role='form')
+                      input(type="hidden", name="_csrf", value="#{csrf_token}")
+                      h3.text-center(style='color: #5cb85c;')
+                        strong  Reset Password
+                      hr
+                      .row
+                        .col-xs-12.col-sm-12.col-md-12
+                          .form-group
+                            .input-group
+                              .input-group-addon
+                                span.glyphicon.glyphicon-user
+                              input#password.form-control(type='password', placeholder='New Password', name='password', data-error='#errorPassword')
+                            small#errorPassword(style='color: red;')
+                      .row
+                        .col-xs-12.col-sm-12.col-md-12
+                          .form-group
+                            .input-group
+                              .input-group-addon
+                                span.glyphicon.glyphicon-lock
+                              input#repassword.form-control(type='password', placeholder='Confirm Password', name='repassword', data-error='#errorReTypePassword')
+                            small#errorReTypePassword(style='color: red;')
+                      hr
+                      .row
+                        .col-xs-12.col-sm-12.col-md-12
+                          button.btn.btn-success.btn-block.btn-lg(type='submit')  Confirm
+  script(type='text/javascript ', src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js ')
+  script(type='text/javascript ').
+    $().ready(function() {
+      $.validator.addMethod("regx", function(value, element) {          
+        return this.optional(element) || /^(?=.*\d)(?=.*[a-z])[0-9a-z]{5,}$/.test(value);
+      }, "Password Must Contain at least 1 Number.");
+      $("#resetpassword ").validate({
+        rules: {
+          password: {
+            required: true,
+            maxlength: 30,
+            regx: "required regx",
+            minlength: 5
+          },
+          repassword: {
+            required: true,
+            equalTo: "#password"
+          }
+        },
+        messages: {
+          password: {
+            required: "Password field not required! ",
+            maxlength: "Password field less than 30 characters! ",
+            minlength: "Password field more than 5 characters! "
+          },
+          repassword: {
+            required: "ReTypePassword field not required! ",
+            equalTo: "Password not match!"
+          }
+        },
+        errorElement: "span",
+        errorPlacement: function(error, element) {
+          var placement = $(element).data("error");
+          if (placement) {
+            $(placement).append(error)
+          } else {
+            error.insertAfter(element);
+          }
+        }
+      });
+    });

@@ -1,0 +1,35 @@
+extends ../layouts/default
+
+block main
+  - var name = user.name ? user.name : '';
+  h1= name
+
+block content
+  .row.text-center
+    h2
+      | Update information Admin
+      small
+    form#updateform.form-horizontal.form-label-left(method='POST', action='/admin/user/profile')
+      input(type="hidden", name="_csrf", value="#{csrf_token}")
+      .form-group
+        .col-md-6.col-sm-6.col-xs-12
+          input#id.form-control.col-md-7.col-xs-12(name='id', type='hidden', value=user._id)
+      .form-group
+        label.control-label.col-md-3.col-sm-3.col-xs-12
+          | Email
+          span.required *
+        .col-md-6.col-sm-6.col-xs-12
+          input#email.form-control.col-md-7.col-xs-12(name='email', type='text', value=user.email, data-error='#errorEmail', disabled='true')
+          small#errorEmail(style='color: red;')
+      .form-group
+        label.control-label.col-md-3.col-sm-3.col-xs-12
+          | Full Name
+          span.required *
+        .col-md-6.col-sm-6.col-xs-12
+          input#fullName.form-control.col-md-7.col-xs-12(name='name', type='text', value=user.name, data-error='#errorName')
+          small#errorName(style='color: red;')
+      .form-group
+        .col-md-6.col-sm-6.col-xs-12.col-md-offset-3.text-center
+          input.btn.btn-success(type='submit', value='Submit', style='margin-right: 4px;')
+          a.btn.btn-danger(href='/admin/users', type='button') Cancel
+

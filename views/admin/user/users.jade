@@ -1,0 +1,56 @@
+extends ../layouts/default
+
+block main
+    h3= title
+
+block content
+    .container
+        .row
+            table.table.table-hover
+                thead
+                    tr
+                        th ##
+                        th Email
+                        th Full Name
+                        th Admin
+                        th Action
+                each user, i in users
+                    tbody
+                        tr
+                            input(type="hidden", id="#{user._id}", name="_csrf", value="#{csrf_token}")
+                            th(scope='row') #{ i }
+                            td #{ user.email }
+                            td #{ user.profile.firstName } #{user.profile.lastName}
+                            td #{ user.role }
+                            if user.role === 0
+                                td
+                                    a(href='/admin/user/edit/#{ user._id }' style='margin-right: 3px;')
+                                        span.btn.btn-primary Update
+                                    span.btn.btn-danger.deleteItem(data-id='#{ user._id }') Delete
+                            else
+                                td
+                                    i.fa.fa-ban(aria-hidden='true')
+    script(type='text/javascript').
+        $(document).ready(function(){
+            jQuery(".deleteItem").click(function() {
+                var value = $(this).data("id") ;
+                var choose = confirm("Are you want to delete!");
+                if (choose) {
+                    $.ajaxSetup({
+                        headers: {"X-CSRF-Token": $("#"+value).val()}
+                    });
+                    $.ajax({
+                        method: "DELETE",
+                        url: "/admin/user/delete",
+                        data: { userId: value }
+                    })
+                    .done(function(msg) {
+                        console.log( "Successfully : " + msg );
+                        alert("Delete successfully!!")
+                        location.reload();
+                    });
+                }
+            })
+        });
+
+

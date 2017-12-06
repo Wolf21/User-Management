@@ -1,0 +1,84 @@
+extends ../layouts/default
+
+block main
+    h3= title
+
+block content
+    form#updateform.form-horizontal.form-label-left(method='POST')
+        input(type="hidden", name="_csrf", value="#{csrf_token}")
+        .form-group
+            .col-md-6.col-sm-6.col-xs-12
+                input#id.form-control.col-md-7.col-xs-12(name='id', type='hidden', value=user._id)
+        .form-group
+            label.control-label.col-md-3.col-sm-3.col-xs-12
+                | Email
+                span.required *
+            .col-md-6.col-sm-6.col-xs-12
+                input#email.form-control.col-md-7.col-xs-12(name='email', type='text', value=user.email, data-error='#errorEmail' disabled)
+                small#errorEmail(style='color: red;')
+        .form-group
+            label.control-label.col-md-3.col-sm-3.col-xs-12
+                | First Name
+                span.required *
+            .col-md-6.col-sm-6.col-xs-12
+                input#firstName.form-control.col-md-7.col-xs-12(name='firstName', type='text', value=user.profile.firstName, data-error='#errorfirstName')
+                small#errorfirstName(style='color: red;')
+        .form-group
+            label.control-label.col-md-3.col-sm-3.col-xs-12
+                | Last Name
+                span.required *
+            .col-md-6.col-sm-6.col-xs-12
+                input#lastName.form-control.col-md-7.col-xs-12(name='lastName', type='text', value=user.profile.lastName, data-error='#errorlastName')
+                small#errorlastName(style='color: red;')
+        .form-group
+            label.control-label.col-md-3.col-sm-3.col-xs-12 Admin
+            .col-md-6.col-sm-6.col-xs-12
+                label.radio-inline
+                    input(type='radio', name='role', value='1', if user.role = 1 checked='checked')
+                    | Yes
+                label.radio-inline
+                    input(type='radio', name='role', value='0', if user.role = 0 checked='checked')
+                    | No
+        .form-group
+            .col-md-6.col-sm-6.col-xs-12.col-md-offset-3.text-center
+                input.btn.btn-success(type='submit', value='Submit', style='margin-right: 4px;')
+                a.btn.btn-danger(href='/admin/users', type='button') Cancel
+    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js')
+    script(type='text/javascript').
+        $("#updateform").validate({
+            rules: {
+                email: {
+                    required: true,
+                    email: true
+                },
+                firstName: {
+                    required: true
+                },
+                lastName: {
+                    required: true
+                }
+            },
+            messages: {
+                email: {
+                    required: "Please email field not required!",
+                    email: "Please enter email!"
+                },
+                firstName: {
+                    required: "Please field not required!"
+                },
+                lastName: {
+                    required: "Please field not required!"
+                },
+            },
+            errorElement: "span",
+            errorPlacement: function (error, element) {
+                var placement = $(element).data("error");
+                if (placement) {
+                    $(placement).append(error)
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        });
+
+

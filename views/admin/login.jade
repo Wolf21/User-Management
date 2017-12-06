@@ -1,0 +1,80 @@
+extends ./layouts/defaultAdmin
+
+block main
+    h3= title
+    //- - if (hasErrors > 0)
+    //-   .alert.alert-danger
+    //-     a.close(href='#', data-dismiss='alert', aria-label='close')
+    //-       | ×
+    //-     ul
+    //-     - each message in messages
+    //-       li!= message
+
+block content
+    .container
+        .row
+            .col-md-6.col-md-offset-3
+                .panel.panel-login
+                    .panel-body
+                        .row
+                            .col-lg-12
+                                form#login-form( method='post', role='form', style='display: block;')
+                                    .form-group
+                                        input(type="hidden", name="_csrf", value="#{csrf_token}")
+                                    if (hasErrors)
+                                        .fade.in.alert.alert-danger
+                                            button.close(type='button', data-dismiss='alert') ×
+                                            ul- each error in messages
+                                            li!= error
+                                    .form-group
+                                        input#username.form-control(type='text', name='email', tabindex='1', placeholder='Email', value='', data-error="#errorEmail")
+                                        small#errorEmail(style='color: red;')
+                                    .form-group
+                                        input#password.form-control(type='password', name='password', tabindex='2', placeholder='Password', data-error="#errorPassword")
+                                        small#errorPassword(style='color: red;')
+                                    .form-group.text-center
+                                        input#remember(type='checkbox', name='rememberme', value="yes")
+                                        label(for='remember')
+                                        | &nbsp;Remember Me
+                                    .form-group
+                                        .row
+                                            .col-sm-6.col-sm-offset-3
+                                                input#login-submit.form-control.btn.btn-login(type='submit', name='login-submit', tabindex='4', value='Log In')
+
+
+        script(type='text/javascript', src='/js/login.js')
+        script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js')
+        script(type='text/javascript').
+            $("#login-form").validate({
+                rules: {
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    password: {
+                        required: true,
+                        maxlength: 20,
+                        minlength: 5
+                    }
+                },
+                messages: {
+                    email: {
+                        required: "Email field required!",
+                        email: "Please enter email!"
+                    },
+                    password: {
+                        required: "Password field required!",
+                        maxlength: "Password field less than 20 characters!",
+                        minlength: "Password field more than 5 characters!"
+                    }
+                },
+                errorElement: "span",
+                errorPlacement: function (error, element) {
+                    var placement = $(element).data("error");
+                    if (placement) {
+                        $(placement).append(error)
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });

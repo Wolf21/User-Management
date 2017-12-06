@@ -1,0 +1,74 @@
+extends ../layouts/default
+
+block main
+  title= title
+  //- - if (hasErrors > 0)
+  //-     .alert.alert-danger
+  //-       a.close(href='#', data-dismiss='alert', aria-label='close')
+  //-         | ×
+  //-       ul
+  //-       - each message in messages
+  //-         li!= message
+  //- - if (noErrors > 0)
+  //-     .alert.alert-info
+  //-       a.close(href='#', data-dismiss='alert', aria-label='close')
+  //-         | ×
+  //-       ul
+  //-       - each inf in info
+  //-         li!= inf
+
+block content
+  .form-gap
+  .container
+    .row
+      .col-md-4.col-md-offset-4
+        .panel.panel-default
+          .panel-body
+            .text-center
+              h3
+                i.fa.fa-lock.fa-4x
+              h2.text-center Forgot Password?
+              p You can reset your password here.
+              .panel-body
+                form#forgotform.form(role='form', autocomplete='off', method='post')
+                  input(type="hidden", name="_csrf", value="#{csrf_token}")
+                  .form-group
+                    .input-group
+                      span.input-group-addon
+                        i.glyphicon.glyphicon-envelope.color-blue
+                      input#email.form-control(type="email", name="email", placeholder="email address", data-error="#errorEmail")
+                      small#errorEmail(style='color: red;')
+                  .form-group
+                    input.btn.btn-lg.btn-primary.btn-block(name='recover-submit', value='Reset Password', type='submit')
+                // end form
+
+  script(type='text/javascript ', src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js ')
+    script(type='text/javascript ').
+      // just for the demos, avoids form submit
+      // jQuery.validator.setDefaults({
+      //     debug: true,
+      //     success: "valid "
+      // });
+      $("#forgotform").validate({
+        rules: {
+          email: {
+            required: true,
+            email: true
+          }
+        },
+        messages: {
+          email: {
+            required: "Email field required!",
+            email: "Please enter email! "
+          }
+        },
+        errorElement: "span",
+        errorPlacement: function (error, element) {
+          var placement = $(element).data("error");
+          if (placement) {
+            $(placement).append(error)
+          } else {
+            error.insertAfter(element);
+          }
+        }
+      });
